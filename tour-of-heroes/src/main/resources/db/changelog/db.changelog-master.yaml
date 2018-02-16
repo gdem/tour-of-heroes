@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: uex7811
+      changes:
+        - createTable:
+            tableName: HEROES
+            columns:
+              - column:
+                  name: ID
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: NAME
+                  type: varchar(254)   
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: IDX_NAME
+            tableName: HEROES
+            unique: false
+            columns:
+              - column:
+                  name: NAME
+                  type: varchar
