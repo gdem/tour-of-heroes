@@ -39,17 +39,17 @@ Folgende Nicht-Funktionale Anforderungen müssen erfüllt werden
 ## Technische Einflussfaktoren
 Die technischen Einflussfaktoren sind wie folgt: 
 
-| Randbedingung| Kurzbeschreibung | 
-|-----------|-----------|
-| Software-Infrastruktur | Openshift als PaaS, OpenJDK für das Zielsystem |
-| Systembetrieb | Verteilte Serveranwendung |
-| Grafische Oberfläche | Keine, Bedienung kann mit Postman oder SoapUI erfolgen |
-| Bibliotheken, Frameworks und Komponenten  | Spring Boot Web, Spring HATEOAS, Spring Data JPA mit Hibernate ORM und Datenbank H2 , Kontinuerliche Datenbankmigration mit Liquibase, REST-Schnittstellendokumentation mit Swagger, Testing mit JUnit &amp; Mockito, Java SE 8 mit Apache Maven und Eclipse IDE  |
-| Programmiersprachen | Java|
-| Analyse- und Entwurfsmethoden  | Objektorientiertes Vorgehen, Klassisches Schichtenmodell, [Twelve-Factor App](https://12factor.net/de/) Prinzip, [Semantische Versionierung](https://semver.org/lang/de/), Git-Flow als Branching-Model für Versionierung in Softwareprojekten | 
-| Datenstrukturen  | Objektmodell der Zielumgebung bekannt | 
-| Programmierrichtlinien  | Sonar für Java |
-| Technische Kommunikation  | REST Level 3 nach Richardson Maturity Model: HATEOAS (Hypertext As The Engine Of Application State) im [HAL  (Hypertext Application Language)](http://stateless.co/hal_specification.html) Format|
+| Randbedingung| Kurzbeschreibung                                                                                                                                                                                                                                                  | 
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Software-Infrastruktur | Openshift als PaaS, OpenJDK für das Zielsystem                                                                                                                                                                                                                    |
+| Systembetrieb | Verteilte Serveranwendung                                                                                                                                                                                                                                         |
+| Grafische Oberfläche | Keine, Bedienung kann mit Postman oder SoapUI erfolgen                                                                                                                                                                                                            |
+| Bibliotheken, Frameworks und Komponenten  | Spring Boot Web, Spring HATEOAS, Spring Data JPA mit Hibernate ORM und Datenbank H2 , Kontinuerliche Datenbankmigration mit Liquibase, REST-Schnittstellendokumentation mit Swagger, Testing mit JUnit &amp; Mockito, Java SE 19 mit Apache Maven und Eclipse IDE |
+| Programmiersprachen | Java                                                                                                                                                                                                                                                              |
+| Analyse- und Entwurfsmethoden  | Objektorientiertes Vorgehen, Klassisches Schichtenmodell, [Twelve-Factor App](https://12factor.net/de/) Prinzip, [Semantische Versionierung](https://semver.org/lang/de/), Git-Flow als Branching-Model für Versionierung in Softwareprojekten                    | 
+| Datenstrukturen  | Objektmodell der Zielumgebung bekannt                                                                                                                                                                                                                             | 
+| Programmierrichtlinien  | Sonar für Java                                                                                                                                                                                                                                                    |
+| Technische Kommunikation  | REST Level 3 nach Richardson Maturity Model: HATEOAS (Hypertext As The Engine Of Application State) im [HAL  (Hypertext Application Language)](http://stateless.co/hal_specification.html) Format                                                                 |
  
 # Logische Sicht
 
