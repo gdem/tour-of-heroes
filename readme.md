@@ -1,3 +1,5 @@
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/gdem/tour-of-heroes/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/gdem/tour-of-heroes/tree/master)
+
 # Einleitung
 In diesem Projekt geht es um die Implementierung von [Tours of Heroes](https://angular.io/tutorial) als Musteranwendung mit Java und Spring Boot. Spring Boot vereinfacht die Implementierung von Java-Anwendungen mit dem Spring-Framework. Zusätzlich unterstützt Spring Boot den Betrieb von Anwendungen ohne Application Server und ist deshalb bestens geeignet für den Betrieb mit Openshift.
 
