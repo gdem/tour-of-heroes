@@ -1,0 +1,15 @@
+version: 2.1
+executors:
+  java19:
+    docker:
+      - image: "cimg/openjdk:19.0.2"
+
+orbs:
+  maven: circleci/maven@1.4.0
+
+workflows:
+  maven_test:
+    jobs:
+      - maven/test:
+          test_results_path: /home/circleci/project/backend/target/surefire-reports
+          executor: java19
