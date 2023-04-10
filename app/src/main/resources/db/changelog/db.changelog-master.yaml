@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: createTable
+      author: GDEM
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changelog/scripts/01-create-schema.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: true
+  - changeSet:
+      id: insertData
+      author: GDEM
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changelog/scripts/02-insert-data.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: true
+
