@@ -7,6 +7,8 @@ import ch.softwareplus.blueprints.hero.api.UpdateHero;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -24,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.NoSuchElementException;
 
 /**
  * REST controller for managing heroes.
@@ -46,10 +47,10 @@ public class HeroController {
             description = "List a page of heroes by page ordered by name",
             tags = {"Heroes Resource"}
     )
-    @ApiResponse(responseCode = "200", description = "The requested page of heroes")
-    @ApiResponse(responseCode = "401", description = "Not authenticated to access resource.")
-    @ApiResponse(responseCode = "403", description = "Not authorized to access resource.")
-    @ApiResponse(responseCode = "500", description = "An unexpected internal server error occurred.")
+    @ApiResponse(responseCode = "200", description = "Ok",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = Hero.class))))
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
     @Parameters({
             @Parameter(name = "page", description = "Results page you want to retrieve (0..N)", schema = @Schema(type = "integer")),
             @Parameter(name = "size", description = "Number of records per page.", schema = @Schema(type = "integer")),
@@ -64,26 +65,13 @@ public class HeroController {
     }
 
     @Operation(
-            description = "Get hero by the given id",
-            tags = {"Heroes Resource"})
-    @ApiResponse(responseCode = "200", description = "The requested page of heroes")
-    @ApiResponse(responseCode = "401", description = "Not authenticated to access resource.")
-    @ApiResponse(responseCode = "403", description = "Not authorized to access resource.")
-    @ApiResponse(responseCode = "500", description = "An unexpected internal server error occurred.")
-    @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
-    public HeroModel getHeroById(@PathVariable("id") final Long id) {
-        log.debug("GET request to get hero with id: {}", id);
-        var result = heroService.findById(id);
-        return assembler.toModel(result);
-    }
-
-    @Operation(
             description = "Save a new hero",
             tags = {"Heroes Resource"})
-    @ApiResponse(responseCode = "200", description = "The requested page of heroes")
-    @ApiResponse(responseCode = "401", description = "Not authenticated to access resource.")
-    @ApiResponse(responseCode = "403", description = "Not authorized to access resource.")
-    @ApiResponse(responseCode = "500", description = "An unexpected internal server error occurred.")
+    @ApiResponse(responseCode = "200", description = "Ok",
+            content = @Content(schema = @Schema(implementation = Hero.class)))
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Not Found")
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> createNewHero(@Valid @RequestBody final CreateHero newHeroe) throws URISyntaxException {
         log.debug("POST request to save new hero : {}.", newHeroe);
@@ -93,12 +81,29 @@ public class HeroController {
     }
 
     @Operation(
+            description = "Get hero by the given id",
+            tags = {"Heroes Resource"})
+    @ApiResponse(responseCode = "200", description = "Ok",
+            content = @Content(schema = @Schema(implementation = Hero.class)))
+    @ApiResponse(responseCode = "400", description = "Bad Request")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    public HeroModel getHeroById(@PathVariable("id") final Long id) {
+        log.debug("GET request to get hero with id: {}", id);
+        var result = heroService.findById(id);
+        return assembler.toModel(result);
+    }
+
+    @Operation(
             description = "Update the given hero",
             tags = {"Heroes Resource"})
-    @ApiResponse(responseCode = "200", description = "The requested page of heroes")
-    @ApiResponse(responseCode = "401", description = "Not authenticated to access resource.")
-    @ApiResponse(responseCode = "403", description = "Not authorized to access resource.")
-    @ApiResponse(responseCode = "500", description = "An unexpected internal server error occurred.")
+    @ApiResponse(responseCode = "200", description = "Ok",
+            content = @Content(schema = @Schema(implementation = Hero.class)))
+    @ApiResponse(responseCode = "400", description = "Bad Request")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Not Found")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaTypes.HAL_JSON_VALUE)
     public HeroModel updateHero(@PathVariable(value = "id") Long id,
                                 @Valid @RequestBody final UpdateHero updateHero) {
@@ -111,10 +116,10 @@ public class HeroController {
     @Operation(
             description = "Delete hero by the given id",
             tags = {"Heroes Resource"})
-    @ApiResponse(responseCode = "200", description = "The requested page of heroes")
-    @ApiResponse(responseCode = "401", description = "Not authenticated to access resource.")
-    @ApiResponse(responseCode = "403", description = "Not authorized to access resource.")
-    @ApiResponse(responseCode = "500", description = "An unexpected internal server error occurred.")
+    @ApiResponse(responseCode = "200", description = "Ok")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Not Found")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteHeroById(@PathVariable("id") final Long id) {
         log.debug("DELETE request to delete hero with id: {}.", id);

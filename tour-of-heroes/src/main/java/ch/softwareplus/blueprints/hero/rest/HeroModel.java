@@ -1,5 +1,6 @@
 package ch.softwareplus.blueprints.hero.rest;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.hateoas.server.core.Relation;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(name = "Hero", description = "Hero model")
 public class HeroModel extends RepresentationModel<HeroModel> {
 
     private String name;
