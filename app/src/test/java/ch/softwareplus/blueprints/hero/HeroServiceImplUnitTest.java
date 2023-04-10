@@ -5,6 +5,7 @@ import ch.softwareplus.blueprints.hero.api.UpdateHero;
 import ch.softwareplus.blueprints.hero.domain.HeroEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -12,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -28,7 +30,7 @@ public class HeroServiceImplUnitTest {
     private HeroServiceImpl heroService;
 
     @Spy
-    private HeroMapper mapper;
+    private HeroMapper mapper = Mappers.getMapper(HeroMapper.class);
 
     @Mock
     private HeroRepository heroRepository;
@@ -47,12 +49,14 @@ public class HeroServiceImplUnitTest {
 
         when(heroRepository.findById(HERO_ID)).thenReturn(maybeEntity);
 
-        heroService.findById(HERO_ID);
+        var result = heroService.findById(HERO_ID);
 
         verify(heroRepository, times(1)).findById(eq(HERO_ID));
         verify(mapper, times(1)).toHero(any());
         verifyNoMoreInteractions(heroRepository);
         verifyNoMoreInteractions(mapper);
+
+        assertThat(result).isNotNull();
     }
 
     @Test
@@ -104,8 +108,6 @@ public class HeroServiceImplUnitTest {
     }
 
     private Optional<HeroEntity> createEntity() {
-        final HeroEntity entity = new HeroEntity(1L, HERO_NAME);
-        entity.setId(HERO_ID);
-        return Optional.of(entity);
+        return Optional.of(new HeroEntity(HERO_ID, HERO_NAME));
     }
 }
