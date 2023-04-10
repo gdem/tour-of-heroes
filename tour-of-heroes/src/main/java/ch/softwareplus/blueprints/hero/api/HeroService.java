@@ -19,31 +19,31 @@ public interface HeroService {
     Page<Hero> getPage(Pageable pageable);
 
     /**
-     * Returns a optional {@code HeroDTO} by the given id.
+     * Returns a {@code Hero} by the given id.
      *
      * @param id the id to find. Cannot be {@code null}.
-     * @return the optional {@code HeroDTO}.
+     * @return the found {@code Hero}.
      */
-    Optional<Hero> findById(Long id);
+    Hero findById(Long id);
 
     /**
-     * Creates a new hero.
+     * Creates a new {@code Hero}.
      *
      * @param createHero the request object to create a new hero. Cannot be {@code null}.
-     * @return the newly saved hero.
+     * @return the newly saved {@code Hero}.
      */
     Hero createNew(CreateHero createHero);
 
     /**
-     * Updates an existing hero.
+     * Updates an existing {@code Hero}.
      *
      * @param updateHero the request object to update a new hero. Cannot be {@code null}.
-     * @return the updated hero.
+     * @return the updated {@code Hero}.
      */
     Hero updateExisting(UpdateHero updateHero);
 
     /**
-     * Deletes the the hero by the given id.
+     * Deletes the hero by the given id.
      *
      * @param id the id to delete. Cannot be {@code null}.
      */

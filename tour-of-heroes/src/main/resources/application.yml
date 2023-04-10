@@ -11,6 +11,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
   h2:
     console:
       enabled: true
@@ -18,16 +19,22 @@ spring:
       settings.web-allow-others: true
 
   datasource:
-    url: jdbc:h2:mem:tour-of-heroes;DB_CLOSE_DELAY=- 1;DB_CLOSE_ON_EXIT=FALSE;mode=MySQL
+    url: jdbc:h2:mem:heroes;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;
     driverClassName: org.h2.Driver
     username: sa
     password:
 
+
 liquibase.change-log: classpath:db/changelog/db.changelog-master.yaml
 
 management:
-  server:
-    base-path: /management
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - prometheus
 
 server:
   port: ${PORT:8080}

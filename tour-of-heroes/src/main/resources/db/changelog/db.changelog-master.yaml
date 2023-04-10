@@ -1,28 +1,22 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
-      author: uex7811
+      id: createTable
+      author: GDEM
       changes:
-        - createTable:
-            tableName: HEROES
-            columns:
-              - column:
-                  name: ID
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: NAME
-                  type: varchar(254)   
-                  constraints:
-                    nullable: false
-        - createIndex:
-            indexName: IDX_NAME
-            tableName: HEROES
-            unique: false
-            columns:
-              - column:
-                  name: NAME
-                  type: varchar
+        - sqlFile:
+            encoding: utf8
+            path: changelog/scripts/01-create-schema.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: true
+  - changeSet:
+      id: insertData
+      author: GDEM
+      changes:
+        - sqlFile:
+            encoding: utf8
+            path: changelog/scripts/02-insert-data.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: true
+

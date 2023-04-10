@@ -1,9 +1,6 @@
 package ch.softwareplus.blueprints.hero;
 
-import ch.softwareplus.blueprints.hero.api.CreateHero;
-import ch.softwareplus.blueprints.hero.api.Hero;
-import ch.softwareplus.blueprints.hero.api.HeroService;
-import ch.softwareplus.blueprints.hero.api.UpdateHero;
+import ch.softwareplus.blueprints.hero.api.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,10 +29,9 @@ public class HeroServiceImpl implements HeroService {
     }
 
     @Override
-    public Optional<Hero> findById(@NonNull Long id) {
-        return repository.findById(id).map(mapper::toHero);
+    public Hero findById(@NonNull Long id) {
+        return repository.findById(id).map(mapper::toHero).orElseThrow(() -> new HeroNotFoundException(id));
     }
-
 
     @Override
     public Hero createNew(@NonNull CreateHero createHero) {
@@ -47,7 +43,7 @@ public class HeroServiceImpl implements HeroService {
     @Override
     public Hero updateExisting(@NonNull UpdateHero updateHero) {
         var maybeEntity = repository.findById(updateHero.getId());
-        var heroEntity = maybeEntity.orElseThrow(() -> new NoSuchElementException());
+        var heroEntity = maybeEntity.orElseThrow(() -> new HeroNotFoundException(updateHero.getId()));
         mapper.update(updateHero, heroEntity);
         final var updatedHeroEntity = repository.save(heroEntity);
         log.debug("Updated existing hero with id: {}", updatedHeroEntity.getId());

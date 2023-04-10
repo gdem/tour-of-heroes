@@ -1,8 +1,5 @@
 package ch.softwareplus.blueprints.hero.rest;
 
-import ch.softwareplus.blueprints.hero.HeroMapper;
-import ch.softwareplus.blueprints.hero.rest.HeroController;
-import ch.softwareplus.blueprints.hero.rest.HeroModelAssembler;
 import ch.softwareplus.blueprints.hero.api.CreateHero;
 import ch.softwareplus.blueprints.hero.api.Hero;
 import ch.softwareplus.blueprints.hero.api.HeroService;
@@ -10,11 +7,8 @@ import ch.softwareplus.blueprints.hero.api.UpdateHero;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -29,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -51,151 +44,134 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @EnableSpringDataWebSupport
 public class HeroControllerUnitTest {
 
-  private final String PAGE_NUMBER_STRING = "1";
-  private final int PAGE_NUMBER = 1;
-  private final String PAGE_SIZE_STRING = "5";
-  private final int PAGE_SIZE = 5;
-  public static final String HAL_JSON_UTF8_VALUE = "application/hal+json;charset=UTF-8";
+    private final String PAGE_NUMBER_STRING = "1";
+    private final int PAGE_NUMBER = 1;
+    private final String PAGE_SIZE_STRING = "5";
+    private final int PAGE_SIZE = 5;
+    public static final String HAL_JSON_UTF8_VALUE = "application/hal+json;charset=UTF-8";
 
-  @Autowired
-  private MockMvc mvc;
+    @Autowired
+    private MockMvc mvc;
 
-  @MockBean
-  private HeroService heroService;
+    @MockBean
+    private HeroService heroService;
 
-  @SpyBean
-  private HeroModelAssembler assembler;
-
-
-  @Autowired
-  private ObjectMapper mapper;
+    @SpyBean
+    private HeroModelAssembler assembler;
 
 
-  @Test
-  public void testListByPage() throws Exception {
-
-    // create mock data
-    final List<Hero> heroes = createData();
-    final PageImpl<Hero> page =
-        new PageImpl<>(heroes, PageRequest.of(PAGE_NUMBER, PAGE_SIZE), heroes.size());
-
-    // mock the behaviour
-    given(heroService.getPage(any())).willReturn(page);
-
-    // @formatter:off
-    mvc.perform(get("/heroes/")
-          .accept(MediaTypes.HAL_JSON_VALUE)
-          .param("number", PAGE_NUMBER_STRING)
-          .param("size", PAGE_SIZE_STRING)
-        )
-      .andExpect(status().isOk())
-      .andExpect(content().contentType(HAL_JSON_UTF8_VALUE))
-      .andExpect(jsonPath("$._embedded.heroes", hasSize(4)))
-      .andExpect(jsonPath("$._embedded.heroes[0].name", is("Bombasto")))
-      .andExpect(jsonPath("$._embedded.heroes[1].name", is("Celeritas")))
-      .andExpect(jsonPath("$._embedded.heroes[2].name", is("Magneta")))
-      .andExpect(jsonPath("$._embedded.heroes[3].name", is("Narco")));
-    
-    // @formatter:on
+    @Autowired
+    private ObjectMapper mapper;
 
 
-    verify(heroService).getPage(any());
-    verifyNoMoreInteractions(heroService);
-  }
+    @Test
+    public void testListByPage() throws Exception {
 
-  @Test
-  public void testGetHero() throws Exception {
+        // create mock data
+        final List<Hero> heroes = createData();
+        final PageImpl<Hero> page =
+                new PageImpl<>(heroes, PageRequest.of(PAGE_NUMBER, PAGE_SIZE), heroes.size());
 
-    given(heroService.findById(1L)).willReturn(Optional.of(new Hero(1L, "Narco")));
+        // mock the behaviour
+        given(heroService.getPage(any())).willReturn(page);
 
-    // @formatter:off
-    mvc.perform(get("/heroes/" + 1)
-        .accept(MediaTypes.HAL_JSON_VALUE)
-        )
-      .andExpect(status().isOk())
-      .andExpect(content().contentType(HAL_JSON_UTF8_VALUE))
-      .andExpect(jsonPath("$.name", is("Narco")))
-      .andExpect(jsonPath("$._links.self.href", is("http://localhost/heroes/1")));
-    
-    // @formatter:on
+        mvc.perform(get("/heroes/")
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .param("number", PAGE_NUMBER_STRING)
+                        .param("size", PAGE_SIZE_STRING)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(HAL_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$._embedded.heroes", hasSize(4)))
+                .andExpect(jsonPath("$._embedded.heroes[0].name", is("Bombasto")))
+                .andExpect(jsonPath("$._embedded.heroes[1].name", is("Celeritas")))
+                .andExpect(jsonPath("$._embedded.heroes[2].name", is("Magneta")))
+                .andExpect(jsonPath("$._embedded.heroes[3].name", is("Narco")));
 
+        verify(heroService).getPage(any());
+        verifyNoMoreInteractions(heroService);
+    }
 
-    verify(heroService).findById(eq(1L));
-    verifyNoMoreInteractions(heroService);
-  }
+    @Test
+    public void testGetHero() throws Exception {
 
-  @Test
-  public void testCreateHero() throws Exception {
-    final CreateHero newHero = new CreateHero();
-    newHero.setName("JUniter");
+        given(heroService.findById(1L)).willReturn(new Hero(1L, "Narco"));
 
-    given(heroService.createNew(any())).willReturn(new Hero(5L, "Juniter"));
+        mvc.perform(get("/heroes/" + 1)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(HAL_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.name", is("Narco")))
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/heroes/1")));
 
-    // @formatter:off
-    mvc.perform(post("/heroes/")
-          .accept(MediaType.APPLICATION_JSON)
-          .contentType(MediaType.APPLICATION_JSON)
-          .content(mapper.writeValueAsString(newHero))
-        )
-      .andExpect(status().isCreated())
-      .andExpect(header().string(HttpHeaders.LOCATION, "/heroes/5"));
-    // @formatter:on
+        verify(heroService).findById(eq(1L));
+        verifyNoMoreInteractions(heroService);
+    }
 
+    @Test
+    public void testCreateHero() throws Exception {
+        final CreateHero newHero = new CreateHero();
+        newHero.setName("JUniter");
 
-    verify(heroService).createNew(any());
-    verifyNoMoreInteractions(heroService);
-  }
+        given(heroService.createNew(any())).willReturn(new Hero(5L, "Juniter"));
 
+        mvc.perform(post("/heroes/")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(newHero))
+                )
+                .andExpect(status().isCreated())
+                .andExpect(header().string(HttpHeaders.LOCATION, "/heroes/5"));
 
-  @Test
-  public void testUpdateHero() throws Exception {
-    final UpdateHero updateHero = new UpdateHero();
-    updateHero.setId(2L);
-    updateHero.setName("UpdatedHero");
-
-    given(heroService.updateExisting(any())).willReturn(new Hero(2L, "UpdatedHero"));
-
-    // @formatter:off
-    mvc.perform(put("/heroes/" + 2)
-          .accept(MediaTypes.HAL_JSON_VALUE)
-          .contentType(MediaType.APPLICATION_JSON)
-          .content(mapper.writeValueAsString(updateHero))
-        )
-      .andExpect(status().isOk())
-      .andExpect(content().contentType(HAL_JSON_UTF8_VALUE))
-      .andExpect(jsonPath("$.name", is("UpdatedHero")))
-      .andExpect(jsonPath("$._links.self.href", is("http://localhost/heroes/2")));
-    // @formatter:on
+        verify(heroService).createNew(any());
+        verifyNoMoreInteractions(heroService);
+    }
 
 
-    verify(heroService).updateExisting(any());
-    verifyNoMoreInteractions(heroService);
-  }
+    @Test
+    public void testUpdateHero() throws Exception {
+        final UpdateHero updateHero = new UpdateHero();
+        updateHero.setId(2L);
+        updateHero.setName("UpdatedHero");
+
+        given(heroService.updateExisting(any())).willReturn(new Hero(2L, "UpdatedHero"));
+
+        mvc.perform(put("/heroes/" + 2)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(updateHero))
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(HAL_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.name", is("UpdatedHero")))
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/heroes/2")));
+
+        verify(heroService).updateExisting(any());
+        verifyNoMoreInteractions(heroService);
+    }
 
 
-  @Test
-  public void testDeleteHero() throws Exception {
+    @Test
+    public void testDeleteHero() throws Exception {
 
-    willDoNothing().given(heroService).delete(1L);
+        willDoNothing().given(heroService).delete(1L);
 
-    // @formatter:off
-    mvc.perform(delete("/heroes/" + 1)
-          .accept(MediaType.APPLICATION_JSON)
-        )
-      .andExpect(status().isNoContent());
-    // @formatter:on
+        mvc.perform(delete("/heroes/" + 1)
+                        .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isNoContent());
 
+        verify(heroService).delete(eq(1L));
+        verifyNoMoreInteractions(heroService);
+    }
 
-    verify(heroService).delete(eq(1L));
-    verifyNoMoreInteractions(heroService);
-  }
-
-  private List<Hero> createData() {
-    final List<Hero> heroes = new ArrayList<>();
-    heroes.add(new Hero(2L, "Bombasto"));
-    heroes.add(new Hero(3L, "Celeritas"));
-    heroes.add(new Hero(4L, "Magneta"));
-    heroes.add(new Hero(1L, "Narco"));
-    return heroes;
-  }
+    private List<Hero> createData() {
+        final List<Hero> heroes = new ArrayList<>();
+        heroes.add(new Hero(2L, "Bombasto"));
+        heroes.add(new Hero(3L, "Celeritas"));
+        heroes.add(new Hero(4L, "Magneta"));
+        heroes.add(new Hero(1L, "Narco"));
+        return heroes;
+    }
 }

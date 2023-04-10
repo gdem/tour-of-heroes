@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface HeroRepository extends ListPagingAndSortingRepository<HeroEntity, Long>, ListCrudRepository<HeroEntity, Long> {
-
+    // intentionally empty
 }

@@ -13,5 +13,4 @@ public class IndexModel extends RepresentationModel<IndexModel> {
 
   private final String name;
   private final String description;
-
 }

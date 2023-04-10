@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 /**
  * REST controller for managing heroes.
@@ -75,9 +73,8 @@ public class HeroController {
     @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
     public HeroModel getHeroById(@PathVariable("id") final Long id) {
         log.debug("GET request to get hero with id: {}", id);
-
-        final var maybeHero = heroService.findById(id);
-        return maybeHero.map(assembler::toModel).orElseThrow(NoSuchElementException::new);
+        var result = heroService.findById(id);
+        return assembler.toModel(result);
     }
 
     @Operation(
