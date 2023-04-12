@@ -77,7 +77,7 @@ public class HeroController {
         log.debug("POST request to save new hero : {}.", newHeroe);
 
         final var result = heroService.createNew(newHeroe);
-        return ResponseEntity.created(new URI("/heroes/" + result.getId())).build();
+        return ResponseEntity.created(new URI("/heroes/" + result.id())).build();
     }
 
     @Operation(
