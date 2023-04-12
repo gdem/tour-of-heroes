@@ -111,8 +111,7 @@ public class HeroControllerUnitTest {
 
     @Test
     public void testCreateHero() throws Exception {
-        final CreateHero newHero = new CreateHero();
-        newHero.setName("JUniter");
+        final CreateHero newHero = new CreateHero("JUniter");
 
         given(heroService.createNew(any())).willReturn(new Hero(5L, "Juniter"));
 

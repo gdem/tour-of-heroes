@@ -1,13 +1,7 @@
 package ch.softwareplus.blueprints.hero.api;
 
-import lombok.Value;
-
 /**
- * Class represents the hero data transfer object.
+ * Record represents the hero object.
  */
-@Value
-public class Hero {
-
-    private Long id;
-    private String name;
+public record Hero(Long id, String name) {
 }

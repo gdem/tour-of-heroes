@@ -87,8 +87,7 @@ public class HeroServiceImplUnitTest {
 
         when(heroRepository.save(any())).thenReturn(entity.get());
 
-        final CreateHero createHero = new CreateHero();
-        createHero.setName(HERO_NAME);
+        final var createHero = new CreateHero(HERO_NAME);
         heroService.createNew(createHero);
     }
 
