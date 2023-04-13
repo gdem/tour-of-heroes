@@ -1,9 +1,7 @@
 package ch.softwareplus.blueprints.hero.rest;
 
-import ch.softwareplus.blueprints.hero.api.CreateHero;
 import ch.softwareplus.blueprints.hero.api.Hero;
 import ch.softwareplus.blueprints.hero.api.HeroService;
-import ch.softwareplus.blueprints.hero.api.UpdateHero;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -95,7 +94,7 @@ public class HeroControllerUnitTest {
     @Test
     public void testGetHero() throws Exception {
 
-        given(heroService.findById(1L)).willReturn(new Hero(1L, "Narco"));
+        given(heroService.findById(1L)).willReturn(Optional.of(new Hero(1L, "Narco")));
 
         mvc.perform(get("/heroes/" + 1)
                         .accept(MediaTypes.HAL_JSON_VALUE)
@@ -111,17 +110,17 @@ public class HeroControllerUnitTest {
 
     @Test
     public void testCreateHero() throws Exception {
-        final CreateHero newHero = new CreateHero("JUniter");
+        final var request = HeroModelRequest.builder().name("JUniter").build();
 
         given(heroService.createNew(any())).willReturn(new Hero(5L, "Juniter"));
 
         mvc.perform(post("/heroes/")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(newHero))
+                        .content(mapper.writeValueAsString(request))
                 )
                 .andExpect(status().isCreated())
-                .andExpect(header().string(HttpHeaders.LOCATION, "/heroes/5"));
+                .andExpect(header().string(HttpHeaders.LOCATION, "http://localhost/heroes/5"));
 
         verify(heroService).createNew(any());
         verifyNoMoreInteractions(heroService);
@@ -130,23 +129,25 @@ public class HeroControllerUnitTest {
 
     @Test
     public void testUpdateHero() throws Exception {
-        final UpdateHero updateHero = new UpdateHero();
-        updateHero.setId(2L);
-        updateHero.setName("UpdatedHero");
+        final var request = HeroModelRequest.builder()
+                .name("UpdatedHero")
+                .build();
 
-        given(heroService.updateExisting(any())).willReturn(new Hero(2L, "UpdatedHero"));
+        given(heroService.findById(2L)).willReturn(Optional.of(new Hero(2L, "Narco")));
+        given(heroService.update(any())).willReturn(new Hero(2L, "UpdatedHero"));
 
         mvc.perform(put("/heroes/" + 2)
                         .accept(MediaTypes.HAL_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(updateHero))
+                        .content(mapper.writeValueAsString(request))
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(HAL_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.name", is("UpdatedHero")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/heroes/2")));
 
-        verify(heroService).updateExisting(any());
+        verify(heroService).findById(eq(2L));
+        verify(heroService).update(any());
         verifyNoMoreInteractions(heroService);
     }
 

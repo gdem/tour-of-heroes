@@ -1,9 +1,7 @@
 package ch.softwareplus.blueprints.hero;
 
 import ch.softwareplus.blueprints.hero.domain.HeroEntity;
-import ch.softwareplus.blueprints.hero.api.CreateHero;
 import ch.softwareplus.blueprints.hero.api.Hero;
-import ch.softwareplus.blueprints.hero.api.UpdateHero;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
@@ -13,9 +11,9 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface HeroMapper {
 
-  HeroEntity toEntity(CreateHero createHero);
+  HeroEntity toEntity(Hero hero);
 
-  void update(UpdateHero updateHero, @MappingTarget HeroEntity entity);
+  void update(Hero hero, @MappingTarget HeroEntity entity);
 
   Hero toHero(HeroEntity entity);
 }

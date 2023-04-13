@@ -21,7 +21,7 @@ public class HeroModelAssembler extends RepresentationModelAssemblerSupport<Hero
 
     @Override
     public HeroModel toModel(Hero hero) {
-        var resource = createModelWithId(hero.id(), hero);
+        var resource = createModelWithId(hero.getId(), hero);
         var result = mapper.toResource(hero);
         result.add(resource.getLinks());
         return result;

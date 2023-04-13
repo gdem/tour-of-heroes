@@ -1,4 +1,4 @@
-package ch.softwareplus.blueprints.web;
+package ch.softwareplus.blueprints.web.exception;
 
 import ch.softwareplus.blueprints.hero.api.HeroNotFoundException;
 import org.springframework.http.HttpStatus;

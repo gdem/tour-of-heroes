@@ -1,6 +1,8 @@
 package ch.softwareplus.blueprints.hero;
 
-import ch.softwareplus.blueprints.hero.api.*;
+import ch.softwareplus.blueprints.hero.api.Hero;
+import ch.softwareplus.blueprints.hero.api.HeroNotFoundException;
+import ch.softwareplus.blueprints.hero.api.HeroService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -29,19 +30,19 @@ public class HeroServiceImpl implements HeroService {
     }
 
     @Override
-    public Hero findById(@NonNull Long id) {
-        return repository.findById(id).map(mapper::toHero).orElseThrow(() -> new HeroNotFoundException(id));
+    public Optional<Hero> findById(@NonNull Long id) {
+        return repository.findById(id).map(mapper::toHero);
     }
 
     @Override
-    public Hero createNew(@NonNull CreateHero createHero) {
+    public Hero createNew(@NonNull Hero createHero) {
         final var newEntity = repository.save(mapper.toEntity(createHero));
         log.debug("Created new hero with id: {}", newEntity.getId());
         return mapper.toHero(newEntity);
     }
 
     @Override
-    public Hero updateExisting(@NonNull UpdateHero updateHero) {
+    public Hero update(@NonNull Hero updateHero) {
         var maybeEntity = repository.findById(updateHero.getId());
         var heroEntity = maybeEntity.orElseThrow(() -> new HeroNotFoundException(updateHero.getId()));
         mapper.update(updateHero, heroEntity);

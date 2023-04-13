@@ -1,9 +1,9 @@
 package ch.softwareplus.blueprints.hero.rest;
 
-import ch.softwareplus.blueprints.hero.api.CreateHero;
 import ch.softwareplus.blueprints.hero.api.Hero;
 import ch.softwareplus.blueprints.hero.api.HeroService;
-import ch.softwareplus.blueprints.hero.api.UpdateHero;
+import ch.softwareplus.blueprints.web.PatchHelper;
+import ch.softwareplus.blueprints.web.exception.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.json.JsonPatch;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,7 @@ import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.net.URISyntaxException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * REST controller for managing heroes.
@@ -42,6 +41,11 @@ public class HeroController {
     private final HeroModelAssembler assembler;
 
     private final PagedResourcesAssembler<Hero> pagedAssembler;
+
+    private final HeroModelMapper modelMapper;
+
+    private final PatchHelper patchHelper;
+
 
     @Operation(
             description = "List a page of heroes by page ordered by name",
@@ -73,11 +77,19 @@ public class HeroController {
     @ApiResponse(responseCode = "403", description = "Forbidden")
     @ApiResponse(responseCode = "404", description = "Not Found")
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> createNewHero(@Valid @RequestBody final CreateHero newHeroe) throws URISyntaxException {
-        log.debug("POST request to save new hero : {}.", newHeroe);
+    public ResponseEntity<HeroModel> createNewHero(@Valid @RequestBody final HeroModelRequest request) {
+        log.debug("POST request to save new hero : {}.", request);
 
-        final var result = heroService.createNew(newHeroe);
-        return ResponseEntity.created(new URI("/heroes/" + result.id())).build();
+        var hero = modelMapper.toHero(request);
+        var created = heroService.createNew(hero);
+
+        var location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(created.getId())
+                .toUri();
+
+        var result = assembler.toModel(created);
+        return ResponseEntity.created(location).body(result);
     }
 
     @Operation(
@@ -91,7 +103,7 @@ public class HeroController {
     @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
     public HeroModel getHeroById(@PathVariable("id") final Long id) {
         log.debug("GET request to get hero with id: {}", id);
-        var result = heroService.findById(id);
+        var result = heroService.findById(id).orElseThrow(ResourceNotFoundException::new);
         return assembler.toModel(result);
     }
 
@@ -106,11 +118,37 @@ public class HeroController {
     @ApiResponse(responseCode = "404", description = "Not Found")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaTypes.HAL_JSON_VALUE)
     public HeroModel updateHero(@PathVariable(value = "id") Long id,
-                                @Valid @RequestBody final UpdateHero updateHero) {
-        log.debug("PUT request to replace the entire record with: {}.", updateHero);
-
-        final var result = heroService.updateExisting(updateHero);
+                                @RequestBody @Valid HeroModelRequest request) {
+        log.debug("PUT request to replace the entire record with: {}.", request);
+        // Find the domain model that will be updated
+        var hero = heroService.findById(id).orElseThrow(ResourceNotFoundException::new);
+        // Update the domain model with the details from the API resource model
+        modelMapper.update(hero, request);
+        // Persist the changes
+        final var result = heroService.update(hero);
         return assembler.toModel(result);
+    }
+
+    @Operation(
+            description = "Patch the given hero",
+            tags = {"Heroes Resource"})
+    @ApiResponse(responseCode = "200", description = "Ok",
+            content = @Content(schema = @Schema(implementation = Hero.class)))
+    @ApiResponse(responseCode = "400", description = "Bad Request")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden")
+    @ApiResponse(responseCode = "404", description = "Not Found")
+    @PatchMapping(value = "/{id}", consumes = "application/json-patch+json", produces = MediaTypes.HAL_JSON_VALUE)
+    public HeroModel patchHero(@PathVariable(value = "id") Long id,
+                               @RequestBody JsonPatch patchDocument) {
+        log.debug("PATCH request to patch with: {}.", patchDocument);
+        // Find the domain model that will be patched
+        var hero = heroService.findById(id).orElseThrow(ResourceNotFoundException::new);
+        var modelRequest = modelMapper.toModelRequest(hero);
+        var patched = patchHelper.patch(patchDocument, modelRequest, HeroModelRequest.class);
+        modelMapper.update(hero, patched);
+        //var result = heroService.updateExisting(hero);
+        return assembler.toModel(hero);
     }
 
     @Operation(

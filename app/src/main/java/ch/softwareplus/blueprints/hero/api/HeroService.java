@@ -3,6 +3,8 @@ package ch.softwareplus.blueprints.hero.api;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Optional;
+
 /**
  * Specifies the hero service.
  */
@@ -17,12 +19,12 @@ public interface HeroService {
     Page<Hero> getPage(Pageable pageable);
 
     /**
-     * Returns a {@code Hero} by the given id.
+     * Returns an optional {@code Hero} by the given id.
      *
      * @param id the id to find. Cannot be {@code null}.
-     * @return the found {@code Hero}.
+     * @return the optional {@code Hero}.
      */
-    Hero findById(Long id);
+    Optional<Hero> findById(Long id);
 
     /**
      * Creates a new {@code Hero}.
@@ -30,15 +32,15 @@ public interface HeroService {
      * @param createHero the request object to create a new hero. Cannot be {@code null}.
      * @return the newly saved {@code Hero}.
      */
-    Hero createNew(CreateHero createHero);
+    Hero createNew(Hero hero);
 
     /**
      * Updates an existing {@code Hero}.
      *
-     * @param updateHero the request object to update a new hero. Cannot be {@code null}.
+     * @param hero the request object to update a new hero. Cannot be {@code null}.
      * @return the updated {@code Hero}.
      */
-    Hero updateExisting(UpdateHero updateHero);
+    Hero update(Hero hero);
 
     /**
      * Deletes the hero by the given id.

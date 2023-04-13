@@ -14,7 +14,7 @@ import org.springframework.hateoas.server.core.Relation;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(name = "Hero", description = "Hero model")
+@Schema(name = "Hero", description = "Hero resource")
 public class HeroModel extends RepresentationModel<HeroModel> {
 
     private String name;

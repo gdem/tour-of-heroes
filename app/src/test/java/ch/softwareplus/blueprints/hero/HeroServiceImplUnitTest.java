@@ -1,7 +1,6 @@
 package ch.softwareplus.blueprints.hero;
 
-import ch.softwareplus.blueprints.hero.api.CreateHero;
-import ch.softwareplus.blueprints.hero.api.UpdateHero;
+import ch.softwareplus.blueprints.hero.api.Hero;
 import ch.softwareplus.blueprints.hero.domain.HeroEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,10 +65,12 @@ public class HeroServiceImplUnitTest {
         when(heroRepository.findById(HERO_ID)).thenReturn(maybeEntity);
         when(heroRepository.save(maybeEntity.get())).thenReturn(maybeEntity.get());
 
-        final UpdateHero command = new UpdateHero();
-        command.setId(HERO_ID);
-        command.setName("Daredevil");
-        heroService.updateExisting(command);
+        var command = Hero.builder()
+                .id(HERO_ID)
+                .name("Daredevil")
+                .build();
+
+        heroService.update(command);
 
         verify(heroRepository, times(1)).findById(eq(HERO_ID));
         verify(heroRepository, times(1)).save(eq(maybeEntity.get()));
@@ -87,8 +88,10 @@ public class HeroServiceImplUnitTest {
 
         when(heroRepository.save(any())).thenReturn(entity.get());
 
-        final var createHero = new CreateHero(HERO_NAME);
-        heroService.createNew(createHero);
+        heroService.createNew(Hero.builder()
+                .name(HERO_NAME)
+                .build()
+        );
     }
 
     @Test
