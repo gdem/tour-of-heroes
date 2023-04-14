@@ -31,7 +31,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  */
 @RestController
 @ExposesResourceFor(HeroModel.class)
-@RequestMapping("/heroes")
+@RequestMapping({
+        "/heroes",
+        "/hereos/"
+})
 @Slf4j
 @RequiredArgsConstructor
 public class HeroController {
@@ -60,7 +63,7 @@ public class HeroController {
             @Parameter(name = "size", description = "Number of records per page.", schema = @Schema(type = "integer")),
             @Parameter(name = "sort", description = "Sorting criteria in the format: property(,asc|desc). Default sort order is ascending. Multiple sort criteria are supported.", schema = @Schema(type = "string"))
     })
-    @GetMapping(value = "/", produces = MediaTypes.HAL_JSON_VALUE)
+    @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
     public PagedModel<HeroModel> listByPage(@PageableDefault Pageable pageable) {
         log.debug("GET request to get page [{}] of heroes", pageable);
 
@@ -76,7 +79,7 @@ public class HeroController {
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @ApiResponse(responseCode = "403", description = "Forbidden")
     @ApiResponse(responseCode = "404", description = "Not Found")
-    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HeroModel> createNewHero(@Valid @RequestBody final HeroModelRequest request) {
         log.debug("POST request to save new hero : {}.", request);
 
@@ -100,7 +103,7 @@ public class HeroController {
     @ApiResponse(responseCode = "400", description = "Bad Request")
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @ApiResponse(responseCode = "403", description = "Forbidden")
-    @GetMapping(value = "/{id}", produces = MediaTypes.HAL_JSON_VALUE)
+    @GetMapping(value = "{id}", produces = MediaTypes.HAL_JSON_VALUE)
     public HeroModel getHeroById(@PathVariable("id") final Long id) {
         log.debug("GET request to get hero with id: {}", id);
         var result = heroService.findById(id).orElseThrow(ResourceNotFoundException::new);
@@ -116,7 +119,7 @@ public class HeroController {
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @ApiResponse(responseCode = "403", description = "Forbidden")
     @ApiResponse(responseCode = "404", description = "Not Found")
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaTypes.HAL_JSON_VALUE)
+    @PutMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaTypes.HAL_JSON_VALUE)
     public HeroModel updateHero(@PathVariable(value = "id") Long id,
                                 @RequestBody @Valid HeroModelRequest request) {
         log.debug("PUT request to replace the entire record with: {}.", request);
@@ -138,7 +141,7 @@ public class HeroController {
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @ApiResponse(responseCode = "403", description = "Forbidden")
     @ApiResponse(responseCode = "404", description = "Not Found")
-    @PatchMapping(value = "/{id}", consumes = "application/json-patch+json", produces = MediaTypes.HAL_JSON_VALUE)
+    @PatchMapping(value = "{id}", consumes = "application/json-patch+json", produces = MediaTypes.HAL_JSON_VALUE)
     public HeroModel patchHero(@PathVariable(value = "id") Long id,
                                @RequestBody JsonPatch patchDocument) {
         log.debug("PATCH request to patch with: {}.", patchDocument);
@@ -158,7 +161,7 @@ public class HeroController {
     @ApiResponse(responseCode = "401", description = "Unauthorized")
     @ApiResponse(responseCode = "403", description = "Forbidden")
     @ApiResponse(responseCode = "404", description = "Not Found")
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(value = "{id}")
     public ResponseEntity<Void> deleteHeroById(@PathVariable("id") final Long id) {
         log.debug("DELETE request to delete hero with id: {}.", id);
         heroService.delete(id);
