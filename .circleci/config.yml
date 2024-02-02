@@ -1,6 +1,6 @@
 version: 2.1
 executors:
-  java19:
+  java21:
     docker:
       - image: "cimg/openjdk:21.0.2"
 
