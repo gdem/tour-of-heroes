@@ -1,0 +1,15 @@
+version: 2.1
+executors:
+  java21:
+    docker:
+      - image: "cimg/openjdk:21.0.2"
+
+orbs:
+  maven: circleci/maven@1.4.1
+
+workflows:
+  maven_test:
+    jobs:
+      - maven/test:
+          test_results_path: /home/circleci/project/app/target/surefire-reports
+          executor: java21
