@@ -25,7 +25,9 @@ spring:
     password:
 
 
-liquibase.change-log: classpath:db/changelog/db.changelog-master.yaml
+liquibase:
+  change-log: classpath:db/changelog/db.changelog-master.yaml
+
 
 management:
   endpoints:

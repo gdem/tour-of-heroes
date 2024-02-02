@@ -1,7 +1,6 @@
 package ch.softwareplus.blueprints.hero;
 
 import ch.softwareplus.blueprints.hero.api.Hero;
-import ch.softwareplus.blueprints.hero.api.HeroNotFoundException;
 import ch.softwareplus.blueprints.hero.api.HeroService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -44,11 +43,13 @@ public class HeroServiceImpl implements HeroService {
     @Override
     public Hero update(@NonNull Hero updateHero) {
         var maybeEntity = repository.findById(updateHero.getId());
-        var heroEntity = maybeEntity.orElseThrow(() -> new HeroNotFoundException(updateHero.getId()));
-        mapper.update(updateHero, heroEntity);
-        final var updatedHeroEntity = repository.save(heroEntity);
-        log.debug("Updated existing hero with id: {}", updatedHeroEntity.getId());
-        return mapper.toHero(updatedHeroEntity);
+
+        return maybeEntity.map(h -> {
+            mapper.update(updateHero, h);
+            final var updatedHeroEntity = repository.save(h);
+            log.debug("Updated existing hero with id: {}", updatedHeroEntity.getId());
+            return mapper.toHero(updatedHeroEntity);
+        }).orElse(null);
     }
 
     @Override

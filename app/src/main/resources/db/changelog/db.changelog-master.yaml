@@ -5,7 +5,7 @@ databaseChangeLog:
       changes:
         - sqlFile:
             encoding: utf8
-            path: changelog/scripts/01-create-schema.sql
+            path: scripts/01-create-schema.sql
             relativeToChangelogFile: true
             splitStatements: true
             stripComments: true
@@ -15,7 +15,7 @@ databaseChangeLog:
       changes:
         - sqlFile:
             encoding: utf8
-            path: changelog/scripts/02-insert-data.sql
+            path: scripts/02-insert-data.sql
             relativeToChangelogFile: true
             splitStatements: true
             stripComments: true

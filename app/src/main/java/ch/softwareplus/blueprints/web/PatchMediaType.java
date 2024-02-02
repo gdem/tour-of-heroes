@@ -1,7 +1,9 @@
 package ch.softwareplus.blueprints.web;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.http.MediaType;
 
+@UtilityClass
 public final class PatchMediaType {
 
     public static final String APPLICATION_JSON_PATCH_VALUE = "application/json-patch+json";
@@ -15,9 +17,5 @@ public final class PatchMediaType {
     static {
         APPLICATION_JSON_PATCH = MediaType.valueOf(APPLICATION_JSON_PATCH_VALUE);
         APPLICATION_MERGE_PATCH = MediaType.valueOf(APPLICATION_MERGE_PATCH_VALUE);
-    }
-
-    private PatchMediaType() {
-        throw new AssertionError("No instances of PatchMediaType for you!");
     }
 }

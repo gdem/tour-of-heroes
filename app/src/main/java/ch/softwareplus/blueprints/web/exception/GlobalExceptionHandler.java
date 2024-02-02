@@ -1,6 +1,5 @@
 package ch.softwareplus.blueprints.web.exception;
 
-import ch.softwareplus.blueprints.hero.api.HeroNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,10 +14,10 @@ import java.net.URI;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(HeroNotFoundException.class)
-    ProblemDetail handleBookmarkNotFoundException(HeroNotFoundException e) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    ProblemDetail handleBookmarkNotFoundException(ResourceNotFoundException e) {
         var problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
-        problemDetail.setTitle("Hero Not Found");
+        problemDetail.setTitle("Resource Not Found");
         problemDetail.setType(URI.create("https://www.software-plus.ch/errors/not-found"));
         return problemDetail;
     }

@@ -2,6 +2,7 @@ package ch.softwareplus.blueprints.hero.rest;
 
 import ch.softwareplus.blueprints.hero.api.Hero;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 /**
@@ -10,12 +11,14 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface HeroModelMapper {
 
-  HeroModel toResource(Hero hero);
+    HeroModel toResource(Hero hero);
 
-  Hero toHero(HeroModelRequest request);
+    @Mapping(target = "id", ignore = true)
+    Hero toHero(HeroModelRequest request);
 
-  HeroModelRequest toModelRequest(Hero hero);
+    HeroModelRequest toModelRequest(Hero hero);
 
-  void update(@MappingTarget Hero hero, HeroModelRequest request);
+    @Mapping(target = "id", ignore = true)
+    void update(@MappingTarget Hero hero, HeroModelRequest request);
 
 }
